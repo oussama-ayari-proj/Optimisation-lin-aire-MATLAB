@@ -1,0 +1,14 @@
+ nbProduits = 2;
+ nbClients = 3;
+ capaProd = [ 140, 100 ];
+ capaCrossdock = 200;
+ demande = [ 
+		[ 400, 120, 120 ], 
+		[ 140, 15, 375 ] 
+	];
+ a = [ 2, 4, 3 ];
+ b = [ 6, 4, 5 ];
+ penalite = [ 7.0, 9.5, 5.0 ];
+ coutStockUsine = [ 0.5, 1.2 ];
+ coutCamionUsine = [ 400.0 , 200.0 ];
+ coutCamionClient = [ 300.0 , 200.0 , 350.0 ];
