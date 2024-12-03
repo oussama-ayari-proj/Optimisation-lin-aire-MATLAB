@@ -1,7 +1,7 @@
 clear
 %lecture des données 
-%[nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient] = lireFichier('instanceExemple.dat');
-load('variables2.mat')
+[nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient] = lireFichier('instance1.dat');
+%load('variables2.mat')
 %% 
 
 %exemple d'appel à la résolution du modèle
