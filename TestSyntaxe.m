@@ -1,5 +1,3 @@
-A=[1,2,6,8,9;3,1,4,8,9];
-F=[2;3];
-A
-F
-A-F
+fileID = importdata('instance2.dat');
+fileID
+

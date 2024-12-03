@@ -1,7 +1,7 @@
 clear
 %lecture des données 
 %[nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient] = lireFichier('instanceExemple.dat');
-load('variables.mat')
+load('variables2.mat')
 %% 
 
 %exemple d'appel à la résolution du modèle
@@ -17,75 +17,60 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
     T=30;
     if modele==1
         %C'est pour la premiere partie du sujet
-        problem=optimproblem("ObjectiveSense","minimize");
-        %Variables de décisions
-        x=optimvar('x',nbProduits,T,LowerBound=0);
-        s=optimvar('s',nbProduits,T,LowerBound=0);
-        y=optimvar('y',nbProduits,nbClients,T);
-        %Fonction Objective
-        coutStockage=0;
-        for i  = 1:nbProduits
+    problem = optimproblem("ObjectiveSense", "minimize");
+
+    % Variables de décision
+    x = optimvar('x', nbProduits, T, "LowerBound", 0); % Production
+    s = optimvar('s', nbProduits, T, "LowerBound", 0); % Stock
+    y = optimvar('y', nbProduits, nbClients, T, "LowerBound", 0); % Livraison
+
+    % Fonction objectif
+    coutStockage = sum(coutStockUsine * sum(s, 2));
+    coutPenalite = 0;
+    for i = 1:nbProduits
+        for j = 1:nbClients
             for t = 1:T
-                coutStockage = coutStockage+ coutStockUsine(i)*s(i,t);
+                avance = max(0, a(j) - t);
+                retard = max(0, t - b(j));
+                coutPenalite = coutPenalite + (avance * penalite(j) + retard * penalite(j)) * y(i, j, t);
             end
         end
-        coutPenaliteLivraison=0;
-        for i = 1:nbProduits
-            for j = 1 : nbClients
-                for t = 1:T
-                    coutPenaliteLivraison=coutPenaliteLivraison+ ((t<a(j))*(a(j)-t)*penalite(j) + (t>b(j))*(t-b(j))*penalite(j))*y(i,j,t);
-                end
-            end
+    end
+    problem.Objective = coutStockage + coutPenalite;
+
+    % Contraintes
+    % 1. Capacité de production
+    for i = 1:nbProduits
+        for t = 1:T
+            problem.Constraints.("capacite_"+i+"_"+t) = x(i, t) <= capaProd(i);
         end
-        funcObjective=coutStockage+coutPenaliteLivraison;
-        problem.Objective=funcObjective;
-        %Contraintes
-        const1=optimconstr(nbClients,T);
-        for i = 1:nbProduits
-            for t = 1:T
-                const1(i,t)= x(i,t)<=capaProd(i);
-            end
+    end
+
+    % 2. Équilibre des stocks
+    for i = 1:nbProduits
+        for t = 1:T-1
+            problem.Constraints.("equilibre_"+i+"_"+t) = ...
+                s(i, t+1) == s(i, t) + x(i, t+1) - sum(y(i, :, t+1));
         end
-        problem.Constraints.c1=const1; %Capacité de production
-        %problem.Constraints.c1= x<=capaProd; %Capacité de production
-        const2=optimconstr(nbClients,T);
-        for i = 1 : nbProduits
-            for t = 1:T
-                if t>1
-                    somme=0;
-                    for j = 1:nbClients
-                        somme=somme+y(i,j,t);
-                    end
-                end
-            end
+    end
+
+    % 3. Satisfaction des clients
+    for i = 1:nbProduits
+        for j = 1:nbClients
+            problem.Constraints.("satisfaction_"+i+"_"+j) = ...
+                sum(y(i, j, :)) == demande(i, j);
         end
-        problem.Constraints.c2= s == tabCont1;%Equilibre stock
-        
-        tabCont2=zeros(nbProduits,nbClients);
-        for i = 1:nbProduits
-            for j=1:nbClients
-                tabCont2(i,j)=0;
-                for t=1:T
-                    tabCont2(i,j)=tabCont2(i,j)+y(i,j,t);
-                end
-            end
-        end
-        problem.Constraints.c3=demande == tabCont2;%Satisfaction demande
-        tabCont3=zeros(T);
-        for t=1:T
-            tabCont3(t)=0;
-            for i = 1:nbProduits
-                for j =1:nbClients
-                    tabCont3(t)=tabCont3(t)+y(i,j,t)
-                end
-            end
-        end
-        problem.Constraints.c4= tabCont3 <=capaCrossdock;%Capacité entrepôt
-        show(problem)
-        [sol,fval,exitFlag]=solve(problem,'Solver','linprog');
-        if exitFlag>=0
-            fprintf('Valeur maximale dans le sac : %d\n', fval);
-        end
+    end
+
+    % 4. Capacité de l'entrepôt central
+    for t = 1:T
+        problem.Constraints.("capacite_entrepot_"+t) = ...
+            sum(sum(y(:, :, t))) <= capaCrossdock;
+    end
+
+    % Résolution
+    [solution, fval] = solve(problem);
+    fprintf("Valeur objective : %f\n", fval);
     elseif modele==2
         %TODO : compléter avec le code de IP1
         fprintf("Pour l'instant, le modèle IP1 n'est pas codé \n"); % ligne à enlever 
