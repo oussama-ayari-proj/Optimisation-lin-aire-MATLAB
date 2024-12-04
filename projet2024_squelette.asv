@@ -1,87 +1,95 @@
 clear
 %lecture des données 
-%[nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient] = lireFichier('instanceExemple.dat');
-load('variables.mat')
+[nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient] = lireFichier('instance1.dat');
+%load('variables2.mat')
 %% 
 
 %exemple d'appel à la résolution du modèle
 [solution, fval] = optimProd(1,nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient);
+%plotOptim(nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
 
+function T = calculerHorizon(I, F, d, b, M)
+    % Étendre jusqu'à la fenêtre maximale de livraison de livraison
+    TmaxLivraison = max(b);
 
+    % Calculer le temps minimal requis pour la production
+    Tprod = 0;
+    for i = 1:I
+        Tprod = max(Tprod, sum(d(i, :)) / F(i));
+    end
+
+    % Calculer le temps minimal pour gérer toutes les livraisons
+    Tentrepot = ceil(sum(sum(d)) / M);
+
+    % Prendre le maximum des trois
+    T = max([TmaxLivraison, Tprod, Tentrepot]);
+end
 
 %%%% PROGRAMMATION DES MODELES (à compléter)%%%%%%%%%%%%%%%
 function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
-
-    %fval=[] ; % ligne à enlever quand un premier modèle sera codé       
-    %solution=[] ;% ligne à enlever quand un premier modèle sera codé
-    T=30;
+    % Début Question 2 (Calcul de l'horizon optimal T)
+    %T=30;
+    T_optim=calculerHorizon(nbProduits,capaProd,demande,b,capaCrossdock);
+    T=T_optim;
+    % Fin Question 2
     if modele==1
-        %C'est pour la premiere partie du sujet
-        problem=optimproblem("ObjectiveSense","minimize");
-        %Variables de décisions
-        x=optimvar('x',nbProduits,T,LowerBound=0);
-        s=optimvar('s',nbProduits,T,LowerBound=0);
-        y=optimvar('y',nbProduits,nbClients,T,LowerBound=0);
-        %Fonction Objective
-        coutStockage=0;
-        for i  = 1:nbProduits
+    %C'est pour la premiere partie du sujet
+    % Début Question 1 (Modélisation du probléme)
+    problem = optimproblem("ObjectiveSense", "minimize");
+
+    % Variables de décision
+    x = optimvar('x', nbProduits, T, "LowerBound", 0); % Production
+    s = optimvar('s', nbProduits, T, "LowerBound", 0); % Stock
+    y = optimvar('y', nbProduits, nbClients, T, "LowerBound", 0); % Livraison
+
+    % Fonction objectif
+    coutStockage = sum(coutStockUsine * sum(s, 2));
+    coutPenalite = 0;
+    for i = 1:nbProduits
+        for j = 1:nbClients
             for t = 1:T
-                coutStockage = coutStockage+ coutStockUsine(i)*s(i,t);
+                avance = max(0, a(j) - t);
+                retard = max(0, t - b(j));
+                coutPenalite = coutPenalite + (avance * penalite(j) + retard * penalite(j)) * y(i, j, t);
             end
         end
-        coutPenaliteLivraison=0;
-        for i = 1:nbProduits
-            for j = 1 : nbClients
-                for t = 1:T
-                    coutPenaliteLivraison=coutPenaliteLivraison + ((t<a(j))*(a(j)-t)*penalite(j) + (t>b(j))*(t-b(j))*penalite(j))*y(i,j,t);
-                end
-            end
+    end
+    problem.Objective = coutStockage + coutPenalite;
+
+    % Contraintes
+    % Capacité de production
+    for i = 1:nbProduits
+        for t = 1:T
+            problem.Constraints.("capacite_"+i+"_"+t) = x(i, t) <= capaProd(i);
         end
-        funcObjective=coutStockage+coutPenaliteLivraison;
-        problem.Objective=funcObjective;
-        %Contraintes
-        %Capacité de production
-        for i = 1:nbProduits
-            for t = 1:T
-                problem.Constraints.("capacite_"+i+"_"+t)= x(i,t)<=capaProd(i);
-            end
+    end
+
+    % Équilibre des stocks
+    for i = 1:nbProduits
+        for t = 1:T-1
+            problem.Constraints.("equilibre_"+i+"_"+t) = ...
+                s(i, t+1) == s(i, t) + x(i, t+1) - sum(y(i, :, t+1));
         end
-        %Equilibre de stock
-        for i = 1:nbProduits
-            for t = 1:T-1
-                somme=0;
-                for j=1:nbClients
-                    somme=somme+y(i,j,t+1);
-                end
-                problem.Constraints.("equilibre_"+i+"_"+t)= s(i,t+1)==s(i,t)+x(i,t+1)-somme;
-            end
+    end
+
+    % Satisfaction des clients
+    for i = 1:nbProduits
+        for j = 1:nbClients
+            problem.Constraints.("satisfaction_"+i+"_"+j) = ...
+                sum(y(i, j, :)) == demande(i, j);
         end
-        %Satisfaction des clients
-        for i = 1:nbProduits
-            for j = 1:nbClients
-                somme=0;
-                for t=1:T
-                    somme=somme+y(i,j,t);
-                end
-                problem.Constraints.("satisfaction_"+i+"_"+t)= demande(i,j) ==somme;
-            end
-        end
-        %Capacite Entrepôt
-        for t=1:T
-            somme=0;
-            for i=1:nbProduits
-                for j=1:nbClients
-                    somme=somme+y(i,j,t);
-                end
-            end
-            problem.Constraints.("capacite_entrepot_"+t)=somme<=capaCrossdock;
-        end
-        %show(problem)
-        x0.x=zeros(nbProduits,T);
-        x0.s=zeros(nbProduits,T);
-        x0.y=zeros(nbProduits,nbClients,T);
-        [solution,fval]=solve(problem,x0);
-        fprintf("%d",fval);
+    end
+
+    % Capacité de l'entrepôt central
+    for t = 1:T
+        problem.Constraints.("capacite_entrepot_"+t) = ...
+            sum(sum(y(:, :, t))) <= capaCrossdock;
+    end
+
+    % Résolution
+    [solution, fval] = solve(problem,"Solver","linprog");
+    fprintf("%f \n",fval);
+    % Fin Question 1
     elseif modele==2
         %TODO : compléter avec le code de IP1
         fprintf("Pour l'instant, le modèle IP1 n'est pas codé \n"); % ligne à enlever 
@@ -98,7 +106,19 @@ end
 %%% A compléter
 function plotOptim(nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
     %TODO : à compléter
-     fprintf("Pour l'instant, la fonction n'est pas codée \n"); % ligne à enlever      
+    valeurs_M=100:20:300;
+    valeurs_objectives=zeros(size(valeurs_M));
+    for i= 1:length(valeurs_M)
+        M=valeurs_M(i);
+        [~,fval]=optimProd(1,nbProduits, nbClients, capaProd, M, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient);
+        valeurs_objectives(i)=fval;
+    end
+    figure;
+    plot(valeurs_M, valeurs_objectives, '-o');
+    xlabel('Capacité de l''entrepôt (M)');
+    ylabel('Valeur de la fonction objectif');
+    title('Impact de la capacité de l''entrepôt sur la fonction objectif');
+    grid on;
 end
 
 %%%%%%%FONCTION DE PARSAGE (ne pas modifier)%%%%%%%%
