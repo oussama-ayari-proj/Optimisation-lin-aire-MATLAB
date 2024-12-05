@@ -124,7 +124,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             end
         end
         % Résolution
-        options = optimoptions('intlinprog','Display', 'final','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        options = optimoptions('intlinprog','Display', 'final','IntegerTolerance', 1e-8,'ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
         [solution, fval] = solve(problem,Options=options);
         fprintf("%f \n",fval);
         
@@ -150,7 +150,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
         problem.Objective = coutStockage + coutPenalite + coutTransport;
         % Contraintes
         % Disponibilité des Camions (usine entrepôt)
-        big_num=1e8;
+        big_num=1e6;
         for i = 1:nbProduits
             for j = 1:nbClients
                 for t = 1:T
@@ -171,7 +171,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             end
         end
         % Résolution
-        options = optimoptions('intlinprog','Display', 'final','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        options = optimoptions('intlinprog','Display', 'final','AbsoluteGapTolerance', 1e-,'ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
         [solution, fval] = solve(problem,Options=options);
         fprintf("%f \n",fval);
         
