@@ -5,10 +5,16 @@ clear
 %%
 % Appel pour la premiére partie
 %[solution, fval] = optimProd(1,nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient);
+% Appel pour la question 1
+[~, ~] = optimProd(1,nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient);
+% Appel pour la question 5
+[~, ~] = optimProd(2,nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient);
+% Appel pour la question 6
+[~, ~] = optimProd(3,nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient);
 % Appel pour la question 3
 %plotOptim(nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
-[solution, fval] = optimProd(2,nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient);
 
+% Début fonction Question 2
 function T = calculerHorizon(I, F, d, b, M)
     % Étendre jusqu'à la fenêtre maximale de livraison de livraison
     TmaxLivraison = max(b);
@@ -22,13 +28,15 @@ function T = calculerHorizon(I, F, d, b, M)
     % Prendre le maximum des trois
     T = max([TmaxLivraison, Tprod, Tentrepot]);
 end
+% Fin fonction Question 2
 
 %%%% PROGRAMMATION DES MODELES (à compléter)%%%%%%%%%%%%%%%
 function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
-    % Début Question 2 (Calcul de l'horizon optimal T)
+    % Appel pour la Question 2 (Calcul de l'horizon optimal T)
     %T=30; % Valeur par défaut de T
     T_optim=calculerHorizon(nbProduits,capaProd,demande,b,capaCrossdock);
     T=T_optim;
+    % Fin Appel de la Question 2
     %C'est pour la premiere partie du sujet
     % Début Question 1 (Modélisation du probléme)
     problem = optimproblem("ObjectiveSense", "minimize");
@@ -43,8 +51,14 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
     for i = 1:nbProduits
         for j = 1:nbClients
             for t = 1:T
-                avance = max(0, a(j) - t);
-                retard = max(0, t - b(j));
+                avance=0;
+                if t<a(j)
+                    avance=a(j)-t;
+                end
+                retard=0;
+                if t>b(j)
+                    retard=t-b(j);
+                end
                 coutPenalite = coutPenalite + (avance * penalite(j) + retard * penalite(j)) * y(i, j, t);
             end
         end
@@ -67,7 +81,8 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
         end
     end
 
-    % Satisfaction des clients
+    % Satisfaction des clients (On suppose qu'on va satisfaire tous les
+    % clients)
     for i = 1:nbProduits
         for j = 1:nbClients
             problem.Constraints.("satisfaction_"+i+"_"+j) = ...
@@ -80,11 +95,10 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
         problem.Constraints.("capacite_entrepot_"+t) = ...
             sum(sum(y(:, :, t))) <= capaCrossdock;
     end
-    % Fin Question 2
     if modele==1
     % Résolution
     [solution, fval] = solve(problem,"Solver","linprog");
-    fprintf("%f \n",fval);
+    fprintf("Valeur objective du model %d : %f \n",modele,fval);
     % Fin Question 1
     elseif modele==2
         % Début de la question 5
@@ -124,26 +138,30 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             end
         end
         % Résolution
-        options = optimoptions('intlinprog','Display', 'final','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        options = optimoptions('intlinprog','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
         [solution, fval] = solve(problem,Options=options);
-        fprintf("%f \n",fval);
+        fprintf("Valeur objective du model %d : %f \n",modele,fval);
         
         % Fin de la question 5
     elseif modele==3 
         % Début de la question 6
-        z = optimvar('z', nbProduits, T, "Type", "integer", "LowerBound", 0, "UpperBound", 1); 
-        w = optimvar('w', nbClients, T, "Type", "integer", "LowerBound", 0, "UpperBound", 1);
+        z = optimvar('z', nbProduits,nbClients, T, "Type", "integer", "LowerBound", 0, "UpperBound", 1); 
+        w = optimvar('w', nbClients,nbProduits, T, "Type", "integer", "LowerBound", 0, "UpperBound", 1);
         % Fonction objectif
         % Cout de transport
         coutTransport = 0;
         for i = 1:nbProduits
-            for t = 1:T
-                coutTransport = coutTransport + coutCamionUsine(i) * z(i, t);
+            for j=1:nbClients
+                for t = 1:T
+                    coutTransport = coutTransport + coutCamionUsine(i) * z(i,j, t);
+                end
             end
         end
         for j = 1:nbClients
-            for t = 1:T
-                coutTransport = coutTransport + coutCamionClient(j) * w(j, t);
+            for i=1:nbProduits
+                for t = 1:T
+                    coutTransport = coutTransport + coutCamionClient(j) * w(j,i, t);
+                end
             end
         end
 
@@ -155,7 +173,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             for j = 1:nbClients
                 for t = 1:T
                     problem.Constraints.("dispo_camion_usine_"+i+"_"+j+"_"+t) = ...
-                    y(i, j, t)<= z(i, t)*big_num;    
+                    y(i, j, t)<= z(i,j, t)*big_num;    
                     %z(i, t) >= y(i, j, t) / big_num;
                 end
             end
@@ -165,15 +183,15 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             for j = 1:nbClients
                 for t = 1:T
                     problem.Constraints.("dispo_camion_client_"+i+"_"+j+"_"+t) = ...
-                    y(i, j, t) <= w(j, t)*big_num;   
+                    y(i, j, t) <= w(j,i, t)*big_num;   
                     %w(j, t) >= y(i, j, t) / big_num;
                 end
             end
         end
         % Résolution
-        options = optimoptions('intlinprog','Display', 'final','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        options = optimoptions('intlinprog','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
         [solution, fval] = solve(problem,Options=options);
-        fprintf("%f \n",fval);
+        fprintf("Valeur objective du model %d : %f \n",modele,fval);
         
         % Fin de la question 6
     else 
