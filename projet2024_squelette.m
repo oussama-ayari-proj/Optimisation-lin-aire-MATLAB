@@ -138,7 +138,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             end
         end
         % Résolution
-        options = optimoptions('intlinprog','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        options = optimoptions('intlinprog','Display','none','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
         [solution, fval] = solve(problem,Options=options);
         fprintf("Valeur objective du model %d : %f \n",modele,fval);
         
@@ -189,7 +189,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             end
         end
         % Résolution
-        options = optimoptions('intlinprog','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        options = optimoptions('intlinprog','Display','none','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
         [solution, fval] = solve(problem,Options=options);
         fprintf("Valeur objective du model %d : %f \n",modele,fval);
         
@@ -230,5 +230,3 @@ instanceParameters = regexprep(instanceParameters, '/\*.*?\*/', '');
 % évaluation des paramètres
 eval(instanceParameters);
 end
-
-
