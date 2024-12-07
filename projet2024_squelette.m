@@ -12,7 +12,7 @@ clear
 % Appel pour la question 6
 [~, ~] = optimProd(3,nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient);
 % Appel pour la question 3
-%plotOptim(nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
+plotOptim(nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
 
 % Début fonction Question 2
 function T = calculerHorizon(I, F, d, b, M)
@@ -51,15 +51,9 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
     for i = 1:nbProduits
         for j = 1:nbClients
             for t = 1:T
-                avance=0;
-                if t<a(j)
-                    avance=a(j)-t;
-                end
-                retard=0;
-                if t>b(j)
-                    retard=t-b(j);
-                end
-                coutPenalite = coutPenalite + (avance * penalite(j) + retard * penalite(j)) * y(i, j, t);
+                avance=max(a(j)-t,0);
+                retard=max(t-b(j),0);
+                coutPenalite = coutPenalite + y(i, j, t)*penalite(j)*max(avance,retard);
             end
         end
     end
