@@ -163,7 +163,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             for j = 1:nbClients
                 for t = 1:T
                     problem.Constraints.("dispo_camion_usine_"+i+"_"+j+"_"+t) = ...
-                    y(i, j, t)<= z(i, t)*big_num;    
+                    y(i, j, t)<= z(i,j, t)*big_num;    
                     %z(i, t) >= y(i, j, t) / big_num;
                 end
             end
@@ -173,7 +173,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             for j = 1:nbClients
                 for t = 1:T
                     problem.Constraints.("dispo_camion_client_"+i+"_"+j+"_"+t) = ...
-                    y(i, j, t) <= w(j, t)*big_num;   
+                    y(i, j, t) <= w(j,i, t)*big_num;   
                     %w(j, t) >= y(i, j, t) / big_num;
                 end
             end
