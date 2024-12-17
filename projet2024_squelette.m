@@ -12,7 +12,7 @@ clear
 % Appel pour la question 6
 [~, ~] = optimProd(3,nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient);
 % Appel pour la question 3
-plotOptim(nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
+%plotOptim(nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
 
 % Début fonction Question 2
 function T = calculerHorizon(I, F, d, b, M)
@@ -35,7 +35,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
     % Appel pour la Question 2 (Calcul de l'horizon optimal T)
     %T=30; % Valeur par défaut de T
     T_optim=calculerHorizon(nbProduits,capaProd,demande,b,capaCrossdock);
-    T=T_optim;
+    T=30;
     % Fin Appel de la Question 2
     %C'est pour la premiere partie du sujet
     % Début Question 1 (Modélisation du probléme)
