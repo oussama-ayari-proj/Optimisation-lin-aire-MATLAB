@@ -70,7 +70,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
 
     % Équilibre des stocks
     for i = 1:nbProduits
-        problem.Constraints.("equilibre_"+1+"_"+1)=s(i,1)==x(i, 1) - sum(y(i, :, 1));
+        problem.Constraints.("equilibre_"+i+"_"+i)=s(i,1)==x(i, 1) - sum(y(i, :, 1));
         for t = 1:T-1
             problem.Constraints.("equilibre_"+i+"_"+(t+1)) = ...
                 s(i, t+1) == s(i, t) + x(i, t+1) - sum(y(i, :, t+1));
