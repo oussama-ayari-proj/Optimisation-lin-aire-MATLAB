@@ -1,0 +1,156 @@
+Solving problem using intlinprog.
+Running HiGHS 1.6.0: Copyright (c) 2023 HiGHS under MIT licence terms
+Presolving model
+553 rows, 1439 cols, 4836 nonzeros
+553 rows, 1439 cols, 4836 nonzeros
+
+Solving MIP model with:
+   553 rows
+   1439 cols (374 binary, 0 integer, 0 implied int., 1065 continuous)
+   4836 nonzeros
+
+        Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+     Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+
+         0       0         0   0.00%   0               inf                  inf        0      0      0         0     0.0s
+ S       0       0         0   0.00%   0               57292.1          100.00%        0      0      0         0     0.0s
+         0       0         0   0.00%   11652.1         57292.1           79.66%        0      0      0       201     0.0s
+ S       0       0         0   0.00%   11652.1         52139.713682      77.65%      573    106      0       201     0.0s
+ S       0       0         0   0.00%   12286.662211    51155.674264      75.98%     1492    280      0       486     0.1s
+ L       0       0         0   0.00%   15043.348762    23043.303733      34.72%     3377    585      4      2608     1.3s
+ L       0       0         0   0.00%   15043.348762    18110.1           16.93%     3377    585      4      5676     2.4s
+ L       0       0         0   0.00%   15043.348762    18107.2           16.92%     3377    413      4      8842     4.1s
+        31       1         6   0.00%   15043.348762    18107.2           16.92%     3397    413     40     54755     9.2s
+ L      35      18         7   0.00%   15171.313014    17488             13.25%     3324    501     48     63688    12.6s
+        49      18         8   0.01%   15171.313014    17488             13.25%     3325    501     50    100041    24.0s
+        66      19        18   0.07%   15171.313014    17488             13.25%     3367    501    115    112079    29.0s
+ L     136      27        48   0.25%   15171.313014    17094.3           11.25%     2827    786    213    119748    38.9s
+       169      29        60   1.43%   15171.313014    17094.3           11.25%     2864    786    263    135275    44.3s
+       193      31        73   2.08%   15171.313014    17094.3           11.25%     2651    818    305    145279    52.2s
+       239      30        96  12.43%   15171.313014    17094.3           11.25%     2846    848    391    152515    57.2s
+       310      35       129  25.64%   15171.313014    17094.3           11.25%     2898    848    514    160500    62.3s
+       391      41       167  34.48%   15171.313014    17094.3           11.25%     2975    826    649    168129    67.3s
+       453      42       198  46.08%   15171.313014    17094.3           11.25%     3048    841    762    177164    72.8s
+       502      43       220  51.84%   15171.313014    17094.3           11.25%     2870    815    826    185787    77.9s
+
+        Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+     Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+
+       561      44       250  58.21%   15171.313014    17094.3           11.25%     2924    815    921    193944    83.0s
+       614      47       274  68.76%   15171.313014    17094.3           11.25%     2967    823   1038    202808    88.6s
+       677      50       305  88.92%   16052.993024    17094.3            6.09%     2470    727   1146    210855    93.6s
+       716      46       325  89.86%   16052.993024    17094.3            6.09%     2391    631   1227    218612    99.0s
+       754      36       350  92.05%   16298.704083    17094.3            4.65%     2680    742   1329    226827   104.1s
+       778      27       366  93.02%   16352.810949    17094.3            4.34%     2762    776   1392    234850   109.2s
+       829      23       394  94.02%   16382.297101    17094.3            4.17%     2649    757   1525    242725   114.4s
+       853       9       412  98.17%   16739.23584     17094.3            2.08%     2590    787   1603    251245   119.4s
+
+Solving report
+  Status            Optimal
+  Primal bound      17094.3
+  Dual bound        17092.6803952
+  Gap               0.00947% (tolerance: 0.01%)
+  Solution status   feasible
+                    17094.3 (objective)
+                    0 (bound viol.)
+                    0 (int. viol.)
+                    0 (row viol.)
+  Timing            122.16 (total)
+                    0.01 (presolve)
+                    0.00 (postsolve)
+  Nodes             862
+  LP iterations     256085 (total)
+                    120085 (strong br.)
+                    12489 (separation)
+                    24340 (heuristics)
+
+Optimal solution found.
+
+Intlinprog stopped because the
+objective value is within a gap tolerance of the
+optimal value, options.RelativeGapTolerance = 0.0001.
+The intcon variables are integer within tolerance,
+options.ConstraintTolerance = 1e-08.
+
+Elapsed time is 122.643679 seconds.
+Valeur objective du model 2 : 17094.300000 
+
+Solving problem using intlinprog.
+Running HiGHS 1.6.0: Copyright (c) 2023 HiGHS under MIT licence terms
+Presolving model
+1845 rows, 1439 cols, 6128 nonzeros
+1845 rows, 1439 cols, 6128 nonzeros
+
+Solving MIP model with:
+   1845 rows
+   1439 cols (374 binary, 0 integer, 0 implied int., 1065 continuous)
+   6128 nonzeros
+
+        Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+     Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+
+         0       0         0   0.00%   0               inf                  inf        0      0      0         0     0.0s
+ S       0       0         0   0.00%   0               49028.862401     100.00%        0      0      0         0     0.3s
+ R       0       0         0   0.00%   14168.862401    47959.6           70.46%        0      0      0      1188     0.3s
+ S       0       0         0   0.00%   14645.600788    45037.430177      67.48%      533     22      0      1508     0.7s
+ S       0       0         0   0.00%   14709.430586    43041.054385      65.82%      564     27      0      1582     0.8s
+ L       0       0         0   0.00%   14975.155343    18598.1           19.48%      650     53      2      1936     5.9s
+ L       0       0         0   0.00%   14975.155343    17995.9           16.79%      650     53      2      5992     9.7s
+ L       0       0         0   0.00%   14975.155343    17995.9           16.79%      650     27      2      9340    13.3s
+         7       0         1   1.56%   14975.155343    17995.9           16.79%      651     27      3     42657    27.6s
+        11       0         2   1.76%   14975.155343    17995.9           16.79%      661     27    105     60796    34.7s
+        15       1         4   2.15%   14975.155343    17995.9           16.79%      674     27    243     73005    39.9s
+        18       1         6   2.54%   14975.155343    17995.9           16.79%      689     27    410     86494    45.8s
+        25       1         9   4.49%   14975.155343    17995.9           16.79%      699     27    498    102450    52.1s
+        56       3        23   5.93%   14975.155343    17995.9           16.79%      733     27   1046    113154    57.2s
+       112      11        46  10.68%   15188.169179    17995.9           15.60%      796     34   1627    126141    63.8s
+       208      22        92  13.00%   15188.169179    17995.9           15.60%      920     36   2582    134974    69.0s
+ T     210      21        93  13.00%   15188.169179    17954.2           15.41%      921     36   2589    135044    69.1s
+ T     219      20        98  13.10%   15188.169179    17925.4           15.27%      926     36   2631    135313    69.3s
+       289      21       130  13.67%   15188.169179    17925.4           15.27%      939     79   3345    143360    74.3s
+       376      34       166  14.64%   15260.392953    17925.4           14.87%      771     84   4310    152266    79.4s
+
+        Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+     Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+
+ T     421      25       181  15.83%   15260.392953    17503.1           12.81%      764     89   4824    158601    82.7s
+ T     437      32       187  16.23%   15260.392953    17458.4           12.59%      786     91   4844    159098    83.1s
+ S     479      22       206  18.44%   15260.392953    17205.7           11.31%      816     56   5199    162823    85.2s
+       541      22       236  31.20%   15260.392953    17205.7           11.31%     1012     64   5853    171534    90.3s
+ S     590      20       262  34.64%   15781.454918    17114.458466       7.79%     1083     71   6148    175977    93.1s
+ T     598      19       266  35.06%   15781.454918    17094.3            7.68%     1113     75   6173    176427    93.4s
+       677      17       305  47.07%   15781.454918    17094.3            7.68%     1102     71   7149    183531    98.4s
+       730      12       335  55.08%   15842.548955    17094.3            7.32%     1323     70   7724    191174   103.4s
+       809       9       374  65.23%   15929.537281    17094.3            6.81%     1345     72   8416    199920   108.9s
+       826       9       383  73.05%   15929.537281    17094.3            6.81%     1501     78   8559    208224   113.9s
+       866       5       405  87.89%   15953.964646    17094.3            6.67%     1473     64   8985    216063   119.0s
+
+Solving report
+  Status            Optimal
+  Primal bound      17094.3
+  Dual bound        17092.8086552
+  Gap               0.00872% (tolerance: 0.01%)
+  Solution status   feasible
+                    17094.3 (objective)
+                    0 (bound viol.)
+                    0 (int. viol.)
+                    0 (row viol.)
+  Timing            122.61 (total)
+                    0.03 (presolve)
+                    0.00 (postsolve)
+  Nodes             906
+  LP iterations     222111 (total)
+                    116098 (strong br.)
+                    4011 (separation)
+                    13666 (heuristics)
+
+Optimal solution found.
+
+Intlinprog stopped because the
+objective value is within a gap tolerance of the
+optimal value, options.RelativeGapTolerance = 0.0001.
+The intcon variables are integer within tolerance,
+options.ConstraintTolerance = 1e-08.
+
+Elapsed time is 129.603556 seconds.
+Valeur objective du model 3 : 17094.300000 

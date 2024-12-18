@@ -1,0 +1,107 @@
+Solving problem using intlinprog.
+Running HiGHS 1.6.0: Copyright (c) 2023 HiGHS under MIT licence terms
+Presolving model
+53 rows, 89 cols, 239 nonzeros
+53 rows, 89 cols, 239 nonzeros
+
+Solving MIP model with:
+   53 rows
+   89 cols (30 binary, 0 integer, 0 implied int., 59 continuous)
+   239 nonzeros
+
+        Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+     Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+
+         0       0         0   0.00%   0               inf                  inf        0      0      0         0     0.0s
+ S       0       0         0   0.00%   0               7486             100.00%        0      0      0         0     0.0s
+         0       0         0   0.00%   3526.677499     7486              52.89%        0      0      0        33     0.0s
+ L       0       0         0   0.00%   6215.928063     6892.5             9.82%      762     75      4       196     0.1s
+
+3.3% inactive integer columns, restarting
+Model after restart has 52 rows, 88 cols (29 bin., 0 int., 0 impl., 59 cont.), and 235 nonzeros
+
+         0       0         0   0.00%   6215.928063     6892.5             9.82%       38      0      0       411     0.1s
+         0       0         0   0.00%   6215.928063     6892.5             9.82%       38     37      0       467     0.1s
+ L       0       0         0   0.00%   6322.160169     6852               7.73%     1020     88      0       603     0.2s
+ L       0       0         0   0.00%   6322.160169     6852               7.73%     1020     88      0      1370     0.3s
+
+Solving report
+  Status            Optimal
+  Primal bound      6852
+  Dual bound        6851.41126293
+  Gap               0.00859% (tolerance: 0.01%)
+  Solution status   feasible
+                    6852 (objective)
+                    0 (bound viol.)
+                    0 (int. viol.)
+                    0 (row viol.)
+  Timing            0.68 (total)
+                    0.00 (presolve)
+                    0.00 (postsolve)
+  Nodes             43
+  LP iterations     8014 (total)
+                    3238 (strong br.)
+                    431 (separation)
+                    3161 (heuristics)
+
+Optimal solution found.
+
+Intlinprog stopped because the
+objective value is within a gap tolerance of
+the optimal value,
+options.RelativeGapTolerance = 0.0001. The
+intcon variables are integer within tolerance,
+options.ConstraintTolerance = 1e-08.
+
+Elapsed time is 0.727223 seconds.
+Valeur objective du model 2 : 6852.000000 
+
+Solving problem using intlinprog.
+Running HiGHS 1.6.0: Copyright (c) 2023 HiGHS under MIT licence terms
+Presolving model
+95 rows, 89 cols, 281 nonzeros
+95 rows, 89 cols, 281 nonzeros
+
+Solving MIP model with:
+   95 rows
+   89 cols (30 binary, 0 integer, 0 implied int., 59 continuous)
+   281 nonzeros
+
+        Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+     Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+
+         0       0         0   0.00%   0               inf                  inf        0      0      0         0     0.0s
+ S       0       0         0   0.00%   0               8238.629808      100.00%        0      0      0         0     0.0s
+ R       0       0         0   0.00%   5076.589973     8086              37.22%        0      0      0        68     0.0s
+ L       0       0         0   0.00%   6127.234138     6852              10.58%      846     44      4       245     0.1s
+
+Solving report
+  Status            Optimal
+  Primal bound      6852
+  Dual bound        6852
+  Gap               0% (tolerance: 0.01%)
+  Solution status   feasible
+                    6852 (objective)
+                    0 (bound viol.)
+                    8.12048840869e-16 (int. viol.)
+                    0 (row viol.)
+  Timing            0.29 (total)
+                    0.00 (presolve)
+                    0.00 (postsolve)
+  Nodes             35
+  LP iterations     3768 (total)
+                    1708 (strong br.)
+                    219 (separation)
+                    1194 (heuristics)
+
+Optimal solution found.
+
+Intlinprog stopped because the
+objective value is within a gap tolerance of
+the optimal value,
+options.AbsoluteGapTolerance = 1e-08. The
+intcon variables are integer within tolerance,
+options.ConstraintTolerance = 1e-08.
+
+Elapsed time is 0.337993 seconds.
+Valeur objective du model 3 : 6852.000000 

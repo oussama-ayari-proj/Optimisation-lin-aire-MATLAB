@@ -26,7 +26,7 @@ function T = calculerHorizon(I, F, d, b, M)
     % Calculer le temps minimal pour gérer toutes les livraisons
     Tentrepot = ceil(sum(sum(d)) / M);
     % Prendre le maximum des trois
-    T = max([TmaxLivraison, Tprod, Tentrepot]);
+    T = ceil(max([TmaxLivraison, Tprod, Tentrepot]));
 end
 % Fin fonction Question 2
 
@@ -35,7 +35,8 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
     % Appel pour la Question 2 (Calcul de l'horizon optimal T)
     %T=30; % Valeur par défaut de T
     T_optim=calculerHorizon(nbProduits,capaProd,demande,b,capaCrossdock);
-    T=30;
+    T=T_optim;
+    big_num=1e6;
     % Fin Appel de la Question 2
     %C'est pour la premiere partie du sujet
     % Début Question 1 (Modélisation du probléme)
@@ -69,14 +70,14 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
 
     % Équilibre des stocks
     for i = 1:nbProduits
+        problem.Constraints.("equilibre_"+1+"_"+1)=s(i,1)==x(i, 1) - sum(y(i, :, 1));
         for t = 1:T-1
-            problem.Constraints.("equilibre_"+i+"_"+t) = ...
+            problem.Constraints.("equilibre_"+i+"_"+(t+1)) = ...
                 s(i, t+1) == s(i, t) + x(i, t+1) - sum(y(i, :, t+1));
         end
     end
 
-    % Satisfaction des clients (On suppose qu'on va satisfaire tous les
-    % clients)
+    % Satisfaction des clients (On suppose qu'on va satisfaire tous les clients)
     for i = 1:nbProduits
         for j = 1:nbClients
             problem.Constraints.("satisfaction_"+i+"_"+j) = ...
@@ -115,7 +116,7 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
         problem.Objective = coutStockage + coutPenalite + coutTransport;
         % Contraintes
         % Disponibilité des Camions (usine entrepôt)
-        big_num=1e6;
+        
         for i = 1:nbProduits
             for t = 1:T
                 problem.Constraints.("dispo_camion_usine_"+i+"_"+t) = ...
@@ -132,8 +133,10 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             end
         end
         % Résolution
-        options = optimoptions('intlinprog','Display','none','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        options = optimoptions('intlinprog','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        tic
         [solution, fval] = solve(problem,Options=options);
+        toc
         fprintf("Valeur objective du model %d : %f \n",modele,fval);
         
         % Fin de la question 5
@@ -158,7 +161,6 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
         problem.Objective = coutStockage + coutPenalite + coutTransport;
         % Contraintes
         % Disponibilité des Camions (usine entrepôt)
-        big_num=1e8;
         for i = 1:nbProduits
             for j = 1:nbClients
                 for t = 1:T
@@ -179,8 +181,10 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
             end
         end
         % Résolution
-        options = optimoptions('intlinprog','Display','none','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        options = optimoptions('intlinprog','ConstraintTolerance',1e-8,'AbsoluteGapTolerance',1e-8);
+        tic
         [solution, fval] = solve(problem,Options=options);
+        toc
         fprintf("Valeur objective du model %d : %f \n",modele,fval);
         
         % Fin de la question 6
@@ -191,7 +195,6 @@ function [solution, fval] = optimProd(modele, nbProduits, nbClients, capaProd, c
 end
 
 
-%%% A compléter
 % Début Question 3
 function plotOptim(nbProduits, nbClients, capaProd, capaCrossdock, demande, a, b, penalite, coutStockUsine, coutCamionUsine, coutCamionClient)
     
